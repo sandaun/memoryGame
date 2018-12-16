@@ -27,6 +27,7 @@ var cards = [
 
 document.onload = function() {
   var memoryGame = new MemoryGame(cards);
+  memoryGame.shuffleCards(); // Mix the cards.
   let html = '';
   memoryGame.cards.forEach(function (pic) {
     html += `<div class="card" data-card-name="${pic.name}">
@@ -39,11 +40,41 @@ document.onload = function() {
   let board = document.querySelector('#memory_board');
   board.innerHTML = html;
 
+
   // Bind the click event of each element to a function
   let back = document.querySelectorAll('.back');
   back.forEach(function(ele) {
     ele.addEventListener('click', function(e) {
-      console.log('click', this);
+      ele.setAttribute('class', 'front'); // Could be using "this" instead of "ele"
+      ele.nextElementSibling.setAttribute('class', 'back'); // Could be using "this" instead of "ele"
+      memoryGame.pickedCards.push(ele); // Saving the card in the array
+      
+      if (memoryGame.pickedCards.length === 2) {
+        setTimeout(function(){
+
+          let firstCard = memoryGame.pickedCards[0].parentNode.getAttribute('data-card-name');
+          let secondCard = memoryGame.pickedCards[1].parentNode.getAttribute('data-card-name');
+
+          if (memoryGame.checkIfPair(firstCard, secondCard)) {
+            // Updating score
+            document.querySelector('#pairs_clicked').innerText = memoryGame.pairsClicked;
+            document.querySelector('#pairs_guessed').innerText = memoryGame.pairsGuessed;
+            console.log(memoryGame.pairsGuessed);
+          } else {
+            // Updating score
+            document.querySelector('#pairs_clicked').innerText = memoryGame.pairsClicked;
+            // Turning the cards clicked
+            for (let i = 0; i < memoryGame.pickedCards.length; i++) {
+            memoryGame.pickedCards[i].setAttribute('class', 'back');
+            memoryGame.pickedCards[i].nextElementSibling.setAttribute('class', 'front');
+            }
+          }
+          memoryGame.pickedCards = []; // Empty the Array and begin again
+          if (memoryGame.isFinished()) { // Calling functon to end game
+            alert('You Win!!!');
+          }
+        }, 500);
+      }
     })
   })
 }();

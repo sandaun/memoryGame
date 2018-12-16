@@ -1,16 +1,29 @@
 class MemoryGame {
   constructor(cards) {
     this.cards = cards;
+    this.pickedCards = [];
+    this.pairsClicked = 0;
+    this.pairsGuessed = 0;
   }
   shuffleCards () {
-    // your code here
+    this.cards.sort(() => 0.5 - Math.random()); // Random used for shuffle. Nujmber will be negative or positive.
   };
 
   checkIfPair (firstCard, secondCard) {
-    // your code here
+    this.pairsClicked++;
+    if (firstCard === secondCard) {
+      this.pairsGuessed++
+      return true;
+    } else {
+      return false
+    }
   }
-
+  
   isFinished () {
-    // your code here
-  };
+    if (this.pairsGuessed === (this.cards.length/2)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
